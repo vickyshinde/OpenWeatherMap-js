@@ -1,0 +1,114 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+  <style>
+    body {
+      background: url("images/bg.jpg") center center no-repeat;
+      background-size: cover;
+      color: #fff
+    }
+  </style>  
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="countryName">Country Name : </div>
+    <div class="cityName">City Name : </div>
+    <div class="text">City Name : </div>
+</div>
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript">
+
+/*function printData(element, label, data){
+  var elementName = document.createElement(element);
+  var textnode = document.createTextNode(label + data);
+  elementName.appendChild(textnode);
+  document.body.appendChild(elementName);
+}*/
+
+function defaultSettings(){
+  var settings = {};
+  settings.key = "70fd0d8e4091568e4be8ed5a3aafb3dd"
+  settings.co = {
+    Latitude: "", 
+    Longitude: ""
+  }
+  return settings;
+}
+
+var primaryUrl;
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        console.log("Geolocation is not supported by this browser.");
+    }
+}
+
+(function(global) {
+  getLocation();
+    var weatherInfo = [];
+    var moduleData = {
+        getweatherInfo: function() {
+            return weatherInfo;
+        },
+        setweatherInfo: function(value) {
+            weatherInfo = value;
+        }
+    }
+    global.module = moduleData;
+})(this);
+
+function showPosition(position) {
+  var settings = defaultSettings();
+  settings.co.Latitude = position.coords.latitude;
+  settings.co.Longitude = position.coords.longitude;
+    console.log("Latitude: " + position.coords.latitude)
+    console.log("Longitude: " + position.coords.longitude);
+  var primaryUrl = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + settings.co.Latitude + "&lon=" + settings.co.Longitude + "&APPID="+ settings.key + "&cnt=6" + "&units=metric";
+
+
+    fetch = function(url, success) {
+      $.ajax({
+          url: url,
+          type: 'GET',
+          success:success,
+          error: function() {
+              alert("data is not found")
+          }
+      });
+   }
+    fetch(primaryUrl, function(response) {
+        module.setweatherInfo(response)
+        showWeather(module.getweatherInfo());
+            /*console.log(response)
+            console.log(primaryUrl)*/
+    });
+    showWeather = function(data) {
+
+      var countryName = data.city.country;
+      var cityName = data.city.name;
+      for(i = 0; i<data.list.length; i++) {
+        var text = new Date(data.list[i].dt * 1000);
+        $(".text").append(text);
+      }
+      
+      
+        $(".countryName").append(countryName);
+        $(".cityName").append(cityName);
+    };
+};
+
+
+</script>
+</body>
+</html>

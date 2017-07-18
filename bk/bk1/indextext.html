@@ -1,0 +1,113 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+  <style>
+    body {
+    }
+  </style>  
+</head>
+<body>
+
+<div class="container-fluid">
+    <div id="id01"></div>
+</div>
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript">
+
+function printData(element, label, data){
+  var elementName = document.createElement(element);
+  var textnode = document.createTextNode(label + data);
+  elementName.appendChild(textnode);
+  document.body.appendChild(elementName);
+}
+
+function defaultSettings(){
+  var settings = {};
+  settings.key = "70fd0d8e4091568e4be8ed5a3aafb3dd"
+  settings.co = {
+    Latitude: "", 
+    Longitude: ""
+  }
+  return settings;
+}
+
+var primaryUrl;
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        console.log("Geolocation is not supported by this browser.");
+    }
+}
+
+(function(global) {
+  getLocation();
+    var weatherInfo = [];
+    var moduleData = {
+        getweatherInfo: function() {
+            return weatherInfo;
+        },
+        setweatherInfo: function(value) {
+            weatherInfo = value;
+        }
+    }
+    global.module = moduleData;
+})(this);
+
+function showPosition(position) {
+  var settings = defaultSettings();
+  settings.co.Latitude = position.coords.latitude;
+  settings.co.Longitude = position.coords.longitude;
+    console.log("Latitude: " + position.coords.latitude)
+    console.log("Longitude: " + position.coords.longitude);
+  var primaryUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + settings.co.Latitude + "&lon=" + settings.co.Longitude + "&APPID="+ settings.key + "&cnt=3" + "&units=metric";
+
+
+    fetch = function(url, success) {
+      $.ajax({
+          url: url,
+          type: 'GET',
+          success:success,
+          error: function() {
+              alert("data is not found")
+          }
+      });
+   }
+    fetch(primaryUrl, function(response) {
+        module.setweatherInfo(response)
+        showWeather(module.getweatherInfo());
+            /*console.log(response)
+            console.log(primaryUrl)*/
+    });
+    showWeather = function(data) {
+      printData("div", "Country Name : ", data.city.country);
+      printData("div", "City Name : ", data.city.name);      
+      for(i = 0; i<data.list.length; i++) {
+        printData("div", "=================" ,"" );
+        printData("div", "Date & Time : ", data.list[i].dt_txt);
+        printData("div", "Temperature : ", data.list[i].main.temp);
+        printData("div", "Maximum temperature : ", data.list[i].main.temp_max);
+        printData("div", "Minimum temperature : ", data.list[i].main.temp_min);
+        printData("div", "Degree : ", data.list[i].wind.deg);
+        for(v = 0; v<data.list[i].weather.length; v++) {
+          printData("div", "Description : ", data.list[i].weather[v].description);
+          printData("div", "icon : ", "<img src='http://openweathermap.org/img/w/" + data.list[i].weather[v].icon +".png'>");
+        }
+      }
+
+    };
+};
+
+
+</script>
+</body>
+</html>

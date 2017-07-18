@@ -1,0 +1,43 @@
+body {
+      background: url("../images/bg.jpg") center center no-repeat;
+      background-size: cover;
+      color: #fff;
+      font-family: 'Open Sans', sans-serif;
+    }
+    .countryCity {
+      text-align: center;
+      font-size: 30px;
+      margin: 30px 0 15px
+    }
+    #weatherApp {
+      margin: 0;
+      padding: 0;
+    }
+    #weatherApp li {
+      list-style-type: none;
+    }
+    .weatherList {
+      background: rgba(0, 0, 0, 0.6);
+      margin:  15px 0; 
+      padding: 0 15px 15px; 
+      border-radius: 15px;
+    }
+    .weatherList {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 20px;
+    }
+    .weatherList span{
+      font-weight: 400;
+      font-size: 14px
+    }
+    .weatherList img {
+      float: left
+    }
+    .weatherList p:last-child {
+      margin: 0
+    }
+    .date {
+      line-height: 50px;
+      margin: 0
+    }

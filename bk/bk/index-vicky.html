@@ -1,0 +1,125 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+	<style>
+		body {
+			background: #333333;
+			padding-top: 20px;
+		}
+	</style>	
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4"><div id="chart1" style="min-width: 310px; max-width: 800px; height: 600px; margin: 0 auto"></div></div>
+    <div class="col-md-4"><div id="chart2" style="min-width: 310px; max-width: 800px; height: 600px; margin: 0 auto"></div></div>
+    <div class="col-md-4"><div id="chart3" style="min-width: 310px; max-width: 800px; height: 600px; margin: 0 auto"></div></div>
+  </div>
+</div>
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript">
+
+
+var key = "70fd0d8e4091568e4be8ed5a3aafb3dd";
+var coords = {
+	Latitude: "", 
+	Longitude: ""
+};
+var primaryUrl;
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+	Latitude = position.coords.latitude;
+	Longitude = position.coords.longitude;
+    console.log("Latitude: " + position.coords.latitude)
+    console.log("Longitude: " + position.coords.longitude);
+    (function(fetchAjax) {
+    	var primaryUrl = "http://api.openweathermap.org/data/2.5/weather?lat=" + Latitude + "&lon=" + Longitude + "&APPID="+ key;
+	    fetchAjax.fetch = function(url, success) {
+		    $.ajax({
+		        url: url,
+		        type: 'GET',
+		        success:success,
+		        error: function() {
+		            alert("data is not found")
+		        }
+		    });
+	   }
+	   	fetch(primaryUrl, function(response) {
+	   	    module.setweatherInfo(response)
+	   	    showWeather(module.getweatherInfo());
+	           console.log(response)
+	           console.log(primaryUrl)
+	   	});
+	   	function showWeather(data) {
+	   		var processedJsonChart1 = new Array();
+	   		document.write("<table border=1 cellpadding=3 cellspacing=0><tr>")
+	   			document.write("<th>Degrees</th>");
+	   			document.write("<th>Name</th>");
+	   			document.write("<th>Description</th>");
+	   			document.write("<th>Icon</th>");
+	   			document.write("<th>Main</th>");
+	   			document.write("<th>latitude</th>");
+	   			document.write("<th>longitude</th>");
+	   			document.write("<th>country</th>");
+	   		document.write("</tr>");
+	   		for (i = 0; i < data.weather.length; i++) {
+	   		    processedJsonChart1.push([
+	   		    	data.name, 
+	   		    	data.weather[i].description, 
+	   		    	data.weather[i].icon,
+	   		    	data.weather[i].main,
+	   		    	data.wind.deg, 
+	   		    	data.coord.lat,
+	   		    	data.coord.lon,
+	   		    	data.sys.country
+	   		    ]);
+	   		    document.write("<tr>");
+	   		    	document.write("<td>"+ data.wind.deg +"</td>");
+	   		    	document.write("<td>"+ data.name +"</td>");
+	   		    	document.write("<td>"+ data.weather[i].description +"</td>");
+	   		    	document.write("<td>"+ data.weather[i].icon +"</td>");
+	   		    	document.write("<td>"+ data.weather[i].main +"</td>");
+	   		    	document.write("<td>"+ data.coord.lat +"</td>");
+	   		    	document.write("<td>"+ data.coord.lon +"</td>");
+	   		    	document.write("<td>"+ data.sys.country +"</td>");
+	   		    document.write("</tr>");
+	   		}
+	   		document.write("</table>");
+	   		console.log(processedJsonChart1)
+	   	};
+    })(this);
+};
+
+(function(global) {
+	getLocation();
+    var weatherInfo = [];
+    var moduleData = {
+        getweatherInfo: function() {
+            return weatherInfo;
+        },
+        setweatherInfo: function(value) {
+            weatherInfo = value;
+        }
+    }
+    global.module = moduleData;
+})(this);
+
+</script>
+</body>
+</html>

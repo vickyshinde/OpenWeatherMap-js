@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+<script>
+var key = "70fd0d8e4091568e4be8ed5a3aafb3dd";
+var coords = {Latitude: "", Longitude: ""};
+var primaryUrl;
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+function showPosition(position) {
+	Latitude = position.coords.latitude;
+	Longitude = position.coords.longitude;
+    console.log("Latitude: " + position.coords.latitude)
+    console.log("Longitude: " + position.coords.longitude);
+    $.ajax({
+        url: "http://api.openweathermap.org/data/2.5/weather?lat=" + Latitude + "&lon=" + Longitude + "&APPID="+ key,
+        type: 'GET',
+        success: function(data){
+    		console.log(data);
+        },
+        error: function() {
+            alert("data is not found")
+        }
+    });
+}
+getLocation();
+
+
+</script>
+
+</body>
+</html>

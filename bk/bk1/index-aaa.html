@@ -1,0 +1,108 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+	<style>
+		body {
+		}
+	</style>	
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row">
+    <div id="id01" class="col-md-4"><div id="chart1" style="min-width: 310px; max-width: 800px; height: 600px; margin: 0 auto"></div></div>
+  </div>
+</div>
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript">
+
+function defaultSettings(){
+	var settings = {};
+	settings.key = "70fd0d8e4091568e4be8ed5a3aafb3dd"
+	settings.coords = {
+		Latitude: "", 
+		Longitude: ""
+	}
+	return settings;
+}
+
+var primaryUrl;
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+(function(global) {
+	getLocation();
+    var weatherInfo = [];
+    var moduleData = {
+        getweatherInfo: function() {
+            return weatherInfo;
+        },
+        setweatherInfo: function(value) {
+            weatherInfo = value;
+        }
+    }
+    global.module = moduleData;
+})(this);
+
+function showPosition(position) {
+	var settings = defaultSettings();
+	settings.coords.Latitude = position.coords.latitude;
+	settings.coords.Longitude = position.coords.longitude;
+    console.log("Latitude: " + position.coords.latitude)
+    console.log("Longitude: " + position.coords.longitude);
+	var primaryUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + settings.coords.Latitude + "&lon=" + settings.coords.Longitude + "&APPID="+ settings.key;
+    fetch = function(url, success) {
+	    $.ajax({
+	        url: url,
+	        type: 'GET',
+	        success:success,
+	        error: function() {
+	            alert("data is not found")
+	        }
+	    });
+   }
+   	fetch(primaryUrl, function(response) {
+   	    module.setweatherInfo(response)
+   	    showWeather(module.getweatherInfo());
+           // console.log(response)
+           console.log(primaryUrl)
+   	});
+   	showWeather = function(data) {
+   		console.log(data);
+   		console.log(data.city.country);
+   		console.log(data.city.name);
+	    for(i = 0; i<data.list.length; i++) {
+	        data.list[i] ;
+   			console.log(data.list[i].dt_txt);
+   			console.log(data.list[i].main.temp_max);
+   			console.log(data.list[i].main.temp_min);
+   			console.log(data.list[i].wind.deg);
+   			for(v = 0; v<data.list[i].weather.length; v++) {
+	   			console.log(data.list[i].weather[v].description);
+	   			console.log(data.list[i].weather[v].icon);
+
+   			}
+	    }
+
+   	};
+};
+
+navigator.geolocation.getCurrentPosition(function(res){console.log(res)},function(err){
+console.log(err)
+})
+</script>
+</body>
+</html>
